@@ -35,11 +35,11 @@ def scrape():
 
     for item in all_news:
         d = { }
-        
+
         # news number
         i = i + 1
         ##print("news number: " +  str(i))
-        
+
         # news title
         news_title = item.find("h4", {"class":"title"})
         news_title = news_title.text.replace('\n', "").strip()
@@ -50,29 +50,31 @@ def scrape():
         news_type = news_type.text.replace('\n', "").strip()
         d['news_type'] = news_type
         ##print(news_type)
-        
+
         # news image
         news_image = item.find("img", {"class":"img"})
         news_image = news_image['src']
         d['news_image'] = news_image
         news_hires = news_image[0:25] + "r,480,360" + news_image[38:]
         ##print(news_hires)
-        
+
         # news color
         news_color = getColor(news_type)
         ##print(news_color)
         #convert to JSO
-        
+
         mainList.append({
-            "url": news_image,
+            "id": i,
+            "url": news_hires,
             "color": news_color,
             "title": news_title,
             "type": news_type
             })
-    
+
         #print(json.dumps(jsondata))
         #mainList.append()
-    return mainList 
+    return json.dumps(mainList)
 
 if __name__ == "__main__":
+    #print(scrape()[0])
     print(scrape())
