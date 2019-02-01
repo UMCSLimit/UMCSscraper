@@ -5,29 +5,25 @@ import requests
 import json
 
 def getColor(string):
-    if string.lower() in ['student']:
-        return "#4bbe9d"
-    elif string.lower() in ['lublin']:
-        return "#dc462d"
-    elif string.lower() in ['tv umcs']:
-        return "#f38200"
-    elif string.lower() in ['biznes']:
-        return "#6b08ff"
-    elif string.lower() in ['pracownik']:
-        return  "#337b93"
-    elif string.lower() in ['absolwent']:
-        return "#60baf6"
-    elif string.lower() in ['kandydat']:
-        return "ff6600"
-    else:
-        return "#9399a5"
+    colors = {
+        'student': '#4bbe9d',
+        'lublin': '#dc462d',
+        'tv umcs': '#f38200',
+        'biznes': '#6b08ff',
+        'pracownik': '#337b93',
+        'absolwent': '#60baf6',
+        'kandydat': '#ff6600',
+    }
+    try:
+        picked = colors[string.lower()]
+        return picked
+    except:
+        return '#9399a5'
+
 def scrape():
     base_url = 'https://www.umcs.pl/'
-        # print(base_url)
-
     r = requests.get(base_url)
     soup = BeautifulSoup(r.text, "html.parser")
-    #print(base_url)
     all_news = soup.find_all('a', class_="box-news")
     #print("number of news: " + str(len(all_news)))
     i = 0
@@ -78,3 +74,4 @@ def scrape():
 if __name__ == "__main__":
     #print(scrape()[0])
     print(scrape())
+    #print( getColor('tv umcs') )
