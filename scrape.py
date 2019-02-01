@@ -20,6 +20,9 @@ def getColor(string):
     except:
         return '#9399a5'
 
+"""
+MAIN FUNCTION FOR SCRAPERING
+"""
 def scrape():
     base_url = 'https://www.umcs.pl/'
     r = requests.get(base_url)
@@ -33,7 +36,7 @@ def scrape():
         d = { }
         # news number
         i = i + 1
-        
+
         # news title
         news_title = item.find("h4", {"class":"title"})
         news_title = news_title.text.replace('\n', "").strip()
@@ -61,7 +64,57 @@ def scrape():
 
     return json.dumps(mainList)
 
+"""
+SCRAPER CLASS FOR TESTING
+"""
+class Scraper:
+    def __init__(self, url='https://www.umcs.pl/'):
+        self.url = url
+        self.news = []
+        self._soup()
+
+    def _soup(self):
+        #Handle request exception here
+        self.req = requests.get(self.url)
+        #End exception
+        self.soup = BeautifulSoup(self.req.text, "html.parser")
+        self.all_news = self.soup.find_all('a', class_="box-news")
+
+    def start(self):
+        pass
+
+    def getItems(self):
+        i = 0
+        itemList = []
+        for item in self.all_news:
+            d = {}
+            i += 1
+            news_title = item.find("h4", {"class":"title"})
+            news_title = news_title.text.replace('\n', "").strip()
+
+            news_type = item.find("em", {"class":"label-area-A"})
+            news_type = news_type.text.replace('\n', "").strip()
+            d['news_type'] = news_type
+
+            news_image = item.find("img", {"class":"img"})
+            news_image = news_image['src']
+            d['news_image'] = news_image
+            news_hires = news_image[0:25] + "r,480,360" + news_image[38:]
+
+            news_color = getColor(news_type)
+
+            itemList.append({
+                "id": i,
+                "url": news_hires,
+                "color": news_color,
+                "title": news_title,
+                "type": news_type
+                })
+        return itemList
+
 if __name__ == "__main__":
+    scrap = Scraper()
+    #print(scrap.getItems())
     #print(scrape()[0])
-    print(scrape())
+    #print(scrape())
     #print( getColor('tv umcs') )
