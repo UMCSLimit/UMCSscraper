@@ -25,7 +25,7 @@ MEDIUM_IMAGE = 'r,480,360'
 BIG_IMAGE = 'r,1024,800'
 
 """
-SCRAPER CLASS FOR TESTING
+SCRAPER CLASS
 
 To do:
 # Only change main object if new update
@@ -71,7 +71,6 @@ class Scraper:
         i = 0
         itemList = []
         for item in self.all_news:
-            d = {}
             i += 1
             # Getting titles
             news_title = item.find("h4", {"class":"title"})
@@ -79,11 +78,10 @@ class Scraper:
             # Getting news type
             news_type = item.find("em", {"class":"label-area-A"})
             news_type = news_type.text.replace('\n', "").strip()
-            d['news_type'] = news_type
             # Getting image url
             news_image = item.find("img", {"class":"img"})
             news_image = news_image['src']
-            d['news_image'] = news_image
+            # New url
             news_hires = news_image[0:25] + BIG_IMAGE + news_image[38:]
             # Change News Type to a color for styling
             news_color = getColor(news_type)

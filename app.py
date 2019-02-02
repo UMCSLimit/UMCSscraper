@@ -1,6 +1,6 @@
 from flask import Flask, Response
 from flask_cors import CORS
-from scrape import scrape, Scraper
+from scrape import Scraper
 from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
