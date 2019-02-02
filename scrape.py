@@ -71,17 +71,31 @@ class Scraper:
     def __init__(self, url='https://www.umcs.pl/'):
         self.url = url
         self.news = []
-        self._soup()
+        self.retries = 3
+        self.success_load = False
+        # self._soup()
 
     def _soup(self):
-        #Handle request exception here
-        self.req = requests.get(self.url)
-        #End exception
-        self.soup = BeautifulSoup(self.req.text, "html.parser")
-        self.all_news = self.soup.find_all('a', class_="box-news")
+        iter = 0
+        while not self.success_load and iter <= self.retries:
+            try:
+                self.req = requests.get(self.url)
+                self.soup = BeautifulSoup(self.req.text, "html.parser")
+                self.all_news = self.soup.find_all('a', class_="box-news")
+                self.success_load = True
+            except:
+                print('Error, retrying {}/{}'.format(iter, self.retries))
+                iter += 1
+
+    def getNews(self):
+        return self.news
 
     def start(self):
-        pass
+        if not self.success_load:
+            print('Page has not loaded, please reload or change url')
+            return
+        self._soup()
+
 
     def getItems(self):
         i = 0
