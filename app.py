@@ -6,6 +6,7 @@ import json
 app = Flask(__name__)
 CORS(app)
 
+
 # TO DO
 # Parse json here and add success message
 # Only change main object if new update
