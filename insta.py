@@ -5,7 +5,10 @@ from instaloader import Instaloader, Profile
 L = Instaloader()
 PROFILE='umcs_lublin'
 profile = Profile.from_username(L.context, PROFILE)
-
+# TO DO:
+# 1. Parse data to json
+# 2. Exchange this to a class
+# 3. Add async job schedule in app.py
 
 def getFollowers():
 	print(profile.followers)
