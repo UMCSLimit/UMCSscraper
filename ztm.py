@@ -1,7 +1,7 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
 import requests
-import wget
+
 
 xml = """<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><CNR_GetRealDepartures xmlns='http://PublicService/'><id>299</id><s>jvr1uNhXYru0sMCOWXaqetAZmYk6ew7vcN1tl2AluEPU=</s></CNR_GetRealDepartures></soap:Body></soap:Envelope>"""
 headers = {
