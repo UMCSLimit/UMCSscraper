@@ -10,7 +10,7 @@ CORS(app)
 # TO DO
 # Send last updated notice ?
 
-myScraper = Scraper(timeout=5)
+myScraper = Scraper(timeout=15)
 instaScraper = instaScraper()
 @app.route('/')
 def getNews():
