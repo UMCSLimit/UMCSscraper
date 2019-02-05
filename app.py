@@ -27,10 +27,10 @@ def getInsta():
 		mimetype='application/json'
 		)
 
-	
+
 scheduler = BackgroundScheduler(timezone="UTC")
 scheduler.add_job(myScraper.start, 'interval', seconds=myScraper.timeout)
-scheduler.add_job(instaScraper.start, 'interval', seconds=30, max_instances = 2)
+scheduler.add_job(instaScraper.start, 'interval', seconds=60, max_instances = 5)
 scheduler.start()
 
 if __name__ == '__main__':
