@@ -1,6 +1,7 @@
 import json
 import requests
 from instaloader import Instaloader, Profile
+
 # TO DO:
 # 1. Add async job schedule in app.py // modify it
 # 2. Add security in case when the data hasn't been succesfully donwloaded
@@ -41,4 +42,5 @@ class instaScraper:
 		return itemList
 
 if __name__ == "__main__":
-	start()
+	insta = instaScraper()
+	insta.getInstagramData()
