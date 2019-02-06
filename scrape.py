@@ -3,6 +3,8 @@
 from bs4 import BeautifulSoup
 import requests
 import json
+import datetime
+import time 
 
 def getColor(string):
     colors = {
@@ -20,98 +22,99 @@ def getColor(string):
     except:
         return '#9399a5'
 
+# Make date readable by all
+date_handler = lambda obj: (
+    obj.isoformat()
+    if isinstance(obj, (datetime.datetime, datetime.date))
+    else None
+)
+
 SMALL_IMAGE = 'c,270,164,t,c'
 MEDIUM_IMAGE = 'r,480,360'
 BIG_IMAGE = 'r,1024,800'
+
+default_json_response = {
+    'success': False, 
+    'payload': []
+}
 
 """
 SCRAPER CLASS
 
 To do:
-# Only change main object if new update
-# Dont change main object if it's not working
-# Change success message to 'False' if last update was over 2h
-# On __init__ make first scrape
+# 
 """
 class Scraper:
     def __init__(self, url='https://www.umcs.pl/', timeout=500):
         self.url = url
         self.timeout = timeout
-        self.news = []
+        self.reload_time = 5
         self.retries = 3
-        self.success_load = False
-        self.jsonData = ''
+        self.last_updated = ''
+        self.jsonData = json.dumps(default_json_response)
+        # Run on __init__
+        self.start()
 
     def _soup(self):
         iter = 0
-        while not self.success_load and iter <= self.retries:
+        success_load = False
+        all_news = []
+        while not success_load and iter <= self.retries:
             try:
-                self.req = requests.get(self.url)
-                self.soup = BeautifulSoup(self.req.text, "html.parser")
-                self.all_news = self.soup.find_all('a', class_="box-news")
-                self.success_load = True
+                req = requests.get(self.url)
+                soup = BeautifulSoup(req.text, "html.parser")
+                all_news = soup.find_all('a', class_="box-news")
+                success_load = True
             except:
-                print('Error, retrying {}/{}'.format(iter, self.retries))
+                print('Error, retrying {}/{}, waiting {} seconds.'.format(iter, self.retries, self.reload_time))
+                # Make this async 
+                # Doesn't work on first load
+                # time.sleep(self.reload_time)
                 iter += 1
+        return success_load, all_news
 
     def start(self):
-        self._soup()
-        if not self.success_load:
-            print('Page has not loaded, please reload or change url')
-            return
-        # Check for fails !
-        data = {
-            'success': True,
-            'payload': self._getItems()
-            }
+        success_response, news = self._soup()
+        payload_data = self._getItems(news)
+        if success_response and len(payload_data) > 0:
+            last_updated = datetime.datetime.now()
+            data = {
+                'success': success_response,
+                'payload': payload_data,
+                'last_updated': last_updated
+                }
+            self.jsonData = json.dumps(data, default=date_handler)
 
-        self.jsonData = json.dumps(data)
-
-    def _getItems(self):
+    def _getItems(self, news):
         i = 0
         itemList = []
-        for item in self.all_news:
-            i += 1
-            # Getting titles
-            news_title = item.find("h4", {"class":"title"})
-            news_title = news_title.text.replace('\n', "").strip()
-            # Getting news type
-            news_type = item.find("em", {"class":"label-area-A"})
-            news_type = news_type.text.replace('\n', "").strip()
-            # Getting image url
-            news_image = item.find("img", {"class":"img"})
-            news_image = news_image['src']
-            # New url
-            news_hires = news_image[0:25] + BIG_IMAGE + news_image[38:]
-            # Change News Type to a color for styling
-            news_color = getColor(news_type)
-            # Adding scraped data to list
-            itemList.append({
-                "id": i,
-                "url": news_hires,
-                "color": news_color,
-                "title": news_title,
-                "type": news_type
-            })
+        try:
+            for item in news:
+                i += 1
+                # Getting titles
+                news_title = item.find("h4", {"class":"title"})
+                news_title = news_title.text.replace('\n', "").strip()
+                # Getting news type
+                news_type = item.find("em", {"class":"label-area-A"})
+                news_type = news_type.text.replace('\n', "").strip()
+                # Getting image url
+                news_image = item.find("img", {"class":"img"})
+                news_image = news_image['src']
+                # New url
+                news_hires = news_image[0:25] + BIG_IMAGE + news_image[38:]
+                # Change News Type to a color for styling
+                news_color = getColor(news_type)
+                # Adding scraped data to list
+                itemList.append({
+                    "id": i,
+                    "url": news_hires,
+                    "color": news_color,
+                    "title": news_title,
+                    "type": news_type
+                })
+        except:
+            return []
         return itemList
-
-"""
-### Use this code for fail checking in 'start()' ###
-
-def checkIfBroken(news):
-	item_dict = json.loads(news)
-	if len(item_dict) == 8:
-		return 0
-	else:
-		return 1
-
-def updateNewsFeed():
-    global newsFeed
-    feed = scrape()
-    broken = checkIfBroken(feed)
-    if broken == 0:
-    	newsFeed = feed
-"""
 
 if __name__ == "__main__":
     scrap = Scraper()
