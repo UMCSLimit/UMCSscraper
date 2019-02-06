@@ -8,18 +8,20 @@ app = Flask(__name__)
 CORS(app)
 
 # TO DO
-# Send last updated notice ?
+# Inherit scrape class for feature classes
+# If success load is false send status 400
 
 myScraper = Scraper(timeout=15)
 instaScraper = instaScraper()
-@app.route('/')
+@app.route('/news')
 def getNews():
 	return Response(
 		response=myScraper.jsonData,
 		status=200,
 		mimetype='application/json'
 	)
-@app.route('/i')
+
+@app.route('/instagram')
 def getInsta():
 	return Response(
 		response=instaScraper.jsonData,
@@ -30,7 +32,7 @@ def getInsta():
 
 scheduler = BackgroundScheduler(timezone="UTC")
 scheduler.add_job(myScraper.start, 'interval', seconds=myScraper.timeout)
-scheduler.add_job(instaScraper.start, 'interval', seconds=60, max_instances = 5)
+scheduler.add_job(instaScraper.start, 'interval', seconds=60, max_instances=5)
 scheduler.start()
 
 if __name__ == '__main__':
