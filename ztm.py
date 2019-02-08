@@ -3,11 +3,13 @@
 import requests
 import time
 from bs4 import BeautifulSoup
+from sel import getXMLheader
 
 s = """RHz1iE+zHloyAg57QR8yxjpBmxzdKaGnE9qWeMbSNM9w="""
 AGE = '469'
 
-COOKIE = 'ASP.NET_SessionId=rlvkztw0ncknxwh3emcuri3f'
+COOKIE_PREFIX = 'ASP.NET_SessionId='
+COOKIE = ''
 ACTION = 'http://PublicService/CNR_GetRealDepartures'
 
 # no age
@@ -46,23 +48,25 @@ def requestSOAP(xml = '', SOAPAction=''):
     return xml_resp
 
 if __name__ == "__main__":
-    print(requestSOAP(xml=xml_street, SOAPAction='http://PublicService/GetStreets'))
-    time.sleep(5)
-    print(requestSOAP(xml=xml_stops, SOAPAction='http://PublicService/GetGoogleStops'))
-    time.sleep(5)
-    print(requestSOAP(xml=xml_route, SOAPAction='http://PublicService/GetRoutes'))
-    time.sleep(5)
-    print(requestSOAP(xml=xml_route, SOAPAction='http://PublicService/CNR_RouteVariants'))
-    time.sleep(5)
-    print(requestSOAP(xml=xml_graph, SOAPAction='http://PublicService/DajGrafyGoogleKlient'))
-    time.sleep(5)
-    print(requestSOAP(xml=xml_dep, SOAPAction='http://PublicService/CNR_GetRealDepartures'))
-    time.sleep(5)
-    print(requestSOAP(xml=xml_vech, SOAPAction='http://PublicService/CNR_GetVehicles'))
-
-
-
-
+    headers = getXMLheader()
+    s = headers[0]
+    AGE = '{}'.format(headers[1])
+    COOKIE = COOKIE_PREFIX + headers[2]
+    resp = requestSOAP(xml=xml_dep, SOAPAction=ACTION)
+    print(resp)
+    # print(requestSOAP(xml=xml_street, SOAPAction='http://PublicService/GetStreets'))
+    # time.sleep(5)
+    # print(requestSOAP(xml=xml_stops, SOAPAction='http://PublicService/GetGoogleStops'))
+    # time.sleep(5)
+    # print(requestSOAP(xml=xml_route, SOAPAction='http://PublicService/GetRoutes'))
+    # time.sleep(5)
+    # print(requestSOAP(xml=xml_route, SOAPAction='http://PublicService/CNR_RouteVariants'))
+    # time.sleep(5)
+    # print(requestSOAP(xml=xml_graph, SOAPAction='http://PublicService/DajGrafyGoogleKlient'))
+    # time.sleep(5)
+    # print(requestSOAP(xml=xml_dep, SOAPAction='http://PublicService/CNR_GetRealDepartures'))
+    # time.sleep(5)
+    # print(requestSOAP(xml=xml_vech, SOAPAction='http://PublicService/CNR_GetVehicles'))
 
     # soup = BeautifulSoup(xml_resp)
     # my_objects = soup.main.findAll("R", attrs={'attr':'DIR'})

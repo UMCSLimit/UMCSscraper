@@ -2,3 +2,4 @@ __pycache__/
 scraper/
 scraper.tar.gz
 .vscode/
+ghostdriver.log
