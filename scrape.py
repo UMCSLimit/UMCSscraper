@@ -5,6 +5,7 @@ import requests
 import json
 import datetime
 import time 
+from helpers import date_handler, default_json_response
 
 def getColor(string):
     colors = {
@@ -22,28 +23,10 @@ def getColor(string):
     except:
         return '#9399a5'
 
-# Make date readable by all
-date_handler = lambda obj: (
-    obj.isoformat()
-    if isinstance(obj, (datetime.datetime, datetime.date))
-    else None
-)
-
 SMALL_IMAGE = 'c,270,164,t,c'
 MEDIUM_IMAGE = 'r,480,360'
 BIG_IMAGE = 'r,1024,800'
 
-default_json_response = {
-    'success': False, 
-    'payload': []
-}
-
-"""
-SCRAPER CLASS
-
-To do:
-# 
-"""
 class Scraper:
     def __init__(self, url='https://www.umcs.pl/', timeout=500):
         self.url = url
