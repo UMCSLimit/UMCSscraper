@@ -44,7 +44,8 @@ def requestSOAP(xml='', age='', cookie='', SOAPAction=''):
     To do:
     # Refactor requestDeparture
     # Clean up data from xml
-    # Serialize hash, age, and cookie info for faster debugging
+    # Check for bugs when serializing
+    # Fix check_if_request_works
 """
 
 class ZTM:
@@ -54,7 +55,38 @@ class ZTM:
         self.cookie = ''
         self.last_updated = ''
         self.jsonData = json.dumps(default_json_response, default=date_handler)
-        self.updateHeaders()
+        working_headers = self.load_from_file()
+        if working_headers:
+            print("Working!")
+        else:
+            print("Headers not working..")
+            self.updateHeaders()
+            self.save_to_file()
+
+    def save_to_file(self):
+        try:
+            my_file = open('headers.txt', 'w')
+            my_file.write(self.hash + '\n')
+            my_file.write(str(self.age) + '\n')
+            my_file.write(self.cookie + '\n') 
+        except:
+            print("Error saving headers")
+
+    def load_from_file(self):
+        try:
+            my_file = open("headers.txt", "r")
+            headers = my_file.read().split("\n")
+            self.hash = headers[0]
+            self.age = headers[1]
+            self.cookie = headers[2]
+            working_request = self.check_if_request_works()
+            return working_request
+        except:
+            return False
+
+    def check_if_request_works(self):
+        tmp = self.requestDeparture()
+        return True
 
     def get_metadata(self):
         if len(hash) == 0:
@@ -104,11 +136,6 @@ class ZTM:
             'payload': vec_list
         }
         
-        # print(xml_parsed)
-        # return json.dumps({
-        #     'xml_parsed': xml_parsed,
-        #     'body': body
-        # })
         return json.dumps(new_json, default=date_handler)
     
     def updateHeaders(self):
@@ -123,9 +150,7 @@ class ZTM:
 
 if __name__ == "__main__":
     ztm = ZTM()
-    ztm.updateHeaders()
-    xml_json = ztm.requestDeparture()
-    print(xml_json)
+    # print(ztm.requestDeparture())
 
 # soup = BeautifulSoup(xml_resp)
 # my_objects = soup.main.findAll("R", attrs={'attr':'DIR'})

@@ -12,7 +12,6 @@ CORS(app)
 # Inherit scrape class for feature classes
 # If success load is false send status 400
 # Make /ztm route work
-# Serialize ztm data for debug mode 
 
 myScraper = Scraper(timeout=15)
 instaScraper = instaScraper()

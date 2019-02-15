@@ -3,3 +3,4 @@ scraper/
 scraper.tar.gz
 .vscode/
 ghostdriver.log
+headers.txt
