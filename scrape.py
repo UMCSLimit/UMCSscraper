@@ -6,6 +6,7 @@ import json
 import datetime
 import time 
 from helpers import date_handler, default_json_response
+from flask import Response
 
 def getColor(string):
     colors = {
@@ -33,10 +34,25 @@ class Scraper:
         self.timeout = timeout
         self.reload_time = 5
         self.retries = 3
+        self.loaded = False
         self.last_updated = ''
         self.jsonData = json.dumps(default_json_response)
         # Run on __init__
         self.start()
+
+    def response(self):
+        if self.loaded:
+            return Response(
+                response=self.jsonData,
+                status=200,
+                mimetype='application/json'
+            )
+        else:
+            return Response(
+                response=self.jsonData,
+                status=400,
+                mimetype='application/json'
+            )
 
     def _soup(self):
         iter = 0
@@ -45,9 +61,10 @@ class Scraper:
         while not success_load and iter <= self.retries:
             try:
                 req = requests.get(self.url)
-                soup = BeautifulSoup(req.text, "html.parser")
-                all_news = soup.find_all('a', class_="box-news")
+                soup = BeautifulSoup(req.text, 'html.parser')
+                all_news = soup.find_all('a', class_='box-news')
                 success_load = True
+                self.loaded = True
             except:
                 print('Error, retrying {}/{}, waiting {} seconds.'.format(iter, self.retries, self.reload_time))
                 # Make this async 
@@ -65,23 +82,22 @@ class Scraper:
                 'success': success_response,
                 'payload': payload_data,
                 'last_updated': last_updated
-                }
+            }
             self.jsonData = json.dumps(data, default=date_handler)
 
     def _getItems(self, news):
-        i = 0
         itemList = []
         try:
             for item in news:
-                i += 1
+                # i += 1
                 # Getting titles
-                news_title = item.find("h4", {"class":"title"})
-                news_title = news_title.text.replace('\n', "").strip()
+                news_title = item.find('h4', {'class':'title'})
+                news_title = news_title.text.replace('\n', '').strip()
                 # Getting news type
-                news_type = item.find("em", {"class":"label-area-A"})
-                news_type = news_type.text.replace('\n', "").strip()
+                news_type = item.find('em', {'class':'label-area-A'})
+                news_type = news_type.text.replace('\n', '').strip()
                 # Getting image url
-                news_image = item.find("img", {"class":"img"})
+                news_image = item.find('img', {'class':'img'})
                 news_image = news_image['src']
                 # New url
                 news_hires = news_image[0:25] + BIG_IMAGE + news_image[38:]
@@ -89,15 +105,14 @@ class Scraper:
                 news_color = getColor(news_type)
                 # Adding scraped data to list
                 itemList.append({
-                    "id": i,
-                    "url": news_hires,
-                    "color": news_color,
-                    "title": news_title,
-                    "type": news_type
+                    'url': news_hires,
+                    'color': news_color,
+                    'title': news_title,
+                    'type': news_type
                 })
         except:
             return []
         return itemList
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     scrap = Scraper()

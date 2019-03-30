@@ -85,12 +85,12 @@ class ZTM:
             return False
 
     def check_if_request_works(self):
-        tmp = self.requestDeparture()
+        # tmp = self.requestDeparture()
         return True
 
     def get_metadata(self):
-        if len(hash) == 0:
-            return json.dumps({ 'success': False })
+        if len(self.hash) == 0:
+            return json.dumps({ 'success': False, 'payload': []})
         obj = {
             'success' : True,
             'last_updated': self.last_updated,
@@ -104,34 +104,39 @@ class ZTM:
         xml = get_xml_departure(hash=self.hash, id=id)
         xml_resp = requestSOAP(xml=xml, age=self.age, cookie=self.cookie, SOAPAction=ACTION)
         xml_parsed = xmltodict.parse(xml_resp)
-
         body = xml_parsed['soap:Envelope']['soap:Body']['CNR_GetRealDeparturesResponse']['CNR_GetRealDeparturesResult']['Schedules']
-        
         stop = body['Stop']
         day = stop['Day']
         R = day['R']
-
-        res_time = body['@time']
-        res_name = stop['@name']
-        res_id = stop['@id']
-        res_type = day['@type']
-        res_desc = day['@desc']
-
         vec_list = []
-
         for vec in R:
-            vec_list.append(
-                vec
-            )
+            vec_list.append({
+                    'number': vec['@nr'],
+                    'direction': vec['@dir'],
+                    'time': vec['S']['@tm'],
+                    'time_adv': vec['S']['@t'],
+                    'th': vec['S']['@th'],
+                    'm': vec['S']['@m'],
+                    's': vec['S']['@s'],
+                    'id': vec['S']['@id'],
+                    'nb': vec['S']['@nb'],
+                    'veh': vec['S']['@veh'],
+                    'uw': vec['S']['@uw'],
+                    'kuw': vec['S']['@kuw'],
+                    'advanced': {
+                        'vt': vec['@vt'],
+                        'vuw': vec['@vuw']
+                    }
+            })
 
         new_json = {
             'success': True,
             'info': {
-                'time': res_time,
-                'name': res_name,
-                'id': res_id,
-                'desc': res_desc,
-                'type': res_type
+                'time': body['@time'],
+                'name': stop['@name'],
+                'id': stop['@id'],
+                'desc': day['@desc'],
+                'type': day['@type']
             },
             'payload': vec_list
         }
@@ -150,17 +155,3 @@ class ZTM:
 
 if __name__ == "__main__":
     ztm = ZTM()
-    # print(ztm.requestDeparture())
-
-# soup = BeautifulSoup(xml_resp)
-# my_objects = soup.main.findAll("R", attrs={'attr':'DIR'})
-# for my_object in my_objects:
-#     print(my_object.contents)
-
-# xml_street = """<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><GetStreets xmlns='http://PublicService/'><s>""" + s + """</s></GetStreets></soap:Body></soap:Envelope>"""
-# xml_stops =  """<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><GetGoogleStops xmlns='http://PublicService/'><s>""" + s + """</s></GetGoogleStops></soap:Body></soap:Envelope>"""
-
-# xml_route =  """<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><CNR_RouteVariants xmlns='http://PublicService/'><n>3</n><vt></vt><s>""" + s + """</s></CNR_RouteVariants></soap:Body></soap:Envelope>"""
-# xml_graph =  """<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><DajGrafyGoogleKlient xmlns='http://PublicService/'><numer_lini>3</numer_lini><war_trasy>H</war_trasy><s>""" + s + """</s></DajGrafyGoogleKlient></soap:Body></soap:Envelope>"""
-# xml_vech =   """<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><CNR_GetVehicles xmlns='http://PublicService/'><r></r><d></d><nb>22291,9006,1812</nb><s>""" + s + """</s></CNR_GetVehicles></soap:Body></soap:Envelope>"""
-# xml_dep =    """<?xml version='1.0' encoding='utf-8'?><soap:Envelope xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xmlns:xsd='http://www.w3.org/2001/XMLSchema' xmlns:soap='http://schemas.xmlsoap.org/soap/envelope/'><soap:Body><CNR_GetRealDepartures xmlns='http://PublicService/'><id>757</id><s>""" + s + """</s></CNR_GetRealDepartures></soap:Body></soap:Envelope>"""

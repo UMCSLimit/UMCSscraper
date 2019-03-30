@@ -1,37 +1,28 @@
 from flask import Flask, Response
 from flask_cors import CORS
 from scrape import Scraper
-from insta import instaScraper
+from insta import InstaScraper
 from ztm import ZTM
 from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
 
 app = Flask(__name__)
 CORS(app)
 
 # TO DO
-# Inherit scrape class for feature classes
-# If success load is false send status 400
-# Make /ztm route work
 
-myScraper = Scraper(timeout=15)
-instaScraper = instaScraper()
+umcsScraper = Scraper(timeout=15)
+instaScraper = InstaScraper()
+instaScraper.start()
 ztm = ZTM()
 
 @app.route('/news')
 def getNews():
-	return Response(
-		response=myScraper.jsonData,
-		status=200,
-		mimetype='application/json'
-	)
+	return umcsScraper.response()
 
 @app.route('/instagram')
 def getInsta():
-	return Response(
-		response=instaScraper.jsonData,
-		status=200,
-		mimetype='application/json'
-		)
+	return instaScraper.response()
 
 @app.route('/ztm')
 def get_metadata():
@@ -50,9 +41,11 @@ def get_bus(bus_stop_id):
 	)
 
 scheduler = BackgroundScheduler(timezone="UTC")
-scheduler.add_job(myScraper.start, 'interval', seconds=myScraper.timeout)
-scheduler.add_job(instaScraper.start, 'interval', seconds=60, max_instances=5)
+scheduler.add_job(umcsScraper.start, 'interval', seconds=1000)
+scheduler.add_job(instaScraper.start, 'interval', seconds=1000, max_instances=5)
 scheduler.start()
 
+atexit.register(lambda: scheduler.shutdown(wait=False))
+
 if __name__ == '__main__':
-    app.run()
+	app.run(host='0.0.0.0', port=3001)
