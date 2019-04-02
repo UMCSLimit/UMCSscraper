@@ -55,13 +55,13 @@ class ZTM:
         self.cookie = ''
         self.last_updated = ''
         self.jsonData = json.dumps(default_json_response, default=date_handler)
-        working_headers = self.load_from_file()
-        if working_headers:
-            print("Working!")
-        else:
-            print("Headers not working..")
-            self.updateHeaders()
-            self.save_to_file()
+        # working_headers = self.load_from_file()
+        # if working_headers:
+        #     print("Working!")
+        self.updateHeaders()
+        # else:
+        #     print("Headers not working..")
+        #     self.save_to_file()
 
     def save_to_file(self):
         try:
@@ -85,6 +85,7 @@ class ZTM:
             return False
 
     def check_if_request_works(self):
+        # TO DO ! IMPORTANT
         # tmp = self.requestDeparture()
         return True
 
@@ -108,24 +109,38 @@ class ZTM:
         stop = body['Stop']
         day = stop['Day']
         R = day['R']
+        # type ? 
         vec_list = []
         for vec in R:
+            is_bus = True if vec['@vt'].find('A') != -1 else False
+            has_air_conditioning = True if vec['@vuw'].find('K') != -1 else False
+            has_ticket_machine = True if vec['@vuw'].find('B') != -1 else False
+            is_low_floor = True if vec['@vuw'].find('N') != -1 else False
+            is_planned = True if vec['S']['@t'].strip().find(' ') != -1 else False
+            # vec -> N and T ? 
             vec_list.append({
                     'number': vec['@nr'],
                     'direction': vec['@dir'],
-                    'time': vec['S']['@tm'],
-                    'time_adv': vec['S']['@t'],
-                    'th': vec['S']['@th'],
-                    'm': vec['S']['@m'],
-                    's': vec['S']['@s'],
-                    'id': vec['S']['@id'],
-                    'nb': vec['S']['@nb'],
-                    'veh': vec['S']['@veh'],
-                    'uw': vec['S']['@uw'],
-                    'kuw': vec['S']['@kuw'],
+                    'time': vec['S']['@t'],
+                    'time_adv': vec['S']['@tm'],
+                    'planned': is_planned,
+                    'properties': {
+                        'bus': is_bus,
+                        'ticket_machine': has_ticket_machine,
+                        'air_conditioning': has_air_conditioning,
+                        'low_floor': is_low_floor
+                    },
                     'advanced': {
                         'vt': vec['@vt'],
-                        'vuw': vec['@vuw']
+                        'vuw': vec['@vuw'],
+                        'th': vec['S']['@th'],
+                        'm': vec['S']['@m'],
+                        's': vec['S']['@s'],
+                        'id': vec['S']['@id'],
+                        'nb': vec['S']['@nb'],
+                        'veh': vec['S']['@veh'],
+                        'uw': vec['S']['@uw'],
+                        'kuw': vec['S']['@kuw'],
                     }
             })
 
