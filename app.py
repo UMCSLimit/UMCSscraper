@@ -1,4 +1,5 @@
 from flask import Flask, Response
+from flask import request
 from flask_cors import CORS
 from scrape import Scraper
 from insta import InstaScraper
@@ -28,6 +29,14 @@ def getInsta():
 def get_metadata():
 	return Response(
 		response=ztm.get_metadata(),
+		status=200,
+		mimetype='application/json'
+	)
+
+@app.route('/ztm/getBuses')
+def get_buses():
+	return Response(
+		response=ztm.buses(req=request.get_json()),
 		status=200,
 		mimetype='application/json'
 	)

@@ -101,7 +101,20 @@ class ZTM:
         }
         return json.dumps(obj, default=date_handler)
 
-    def requestDeparture(self, id='757'):
+    def buses(self, req={}):
+        buses = req['buses']
+        buses_to_add = []
+        for id in buses:
+            buses_to_add.append(self.getBusStop(id))
+        new_json = {
+            'success': True,
+            'info': {
+            },
+            'payload': buses_to_add
+        }
+        return json.dumps(new_json)
+
+    def getBusStop(self, id='757'):
         xml = get_xml_departure(hash=self.hash, id=id)
         xml_resp = requestSOAP(xml=xml, age=self.age, cookie=self.cookie, SOAPAction=ACTION)
         xml_parsed = xmltodict.parse(xml_resp)
@@ -143,19 +156,24 @@ class ZTM:
                         'kuw': vec['S']['@kuw'],
                     }
             })
-
-        new_json = {
-            'success': True,
+        return {
             'info': {
-                'time': body['@time'],
-                'name': stop['@name'],
-                'id': stop['@id'],
-                'desc': day['@desc'],
-                'type': day['@type']
+            'time': body['@time'],
+            'name': stop['@name'],
+            'id': stop['@id'],
+            'desc': day['@desc'],
+            'type': day['@type']
             },
             'payload': vec_list
         }
-        
+
+    def requestDeparture(self, id='757'):
+        bus = self.getBusStop(id)
+        new_json = {
+            'success': True,
+            'info': bus['info'],
+            'payload': bus['payload']
+        }
         return json.dumps(new_json, default=date_handler)
     
     def updateHeaders(self):
