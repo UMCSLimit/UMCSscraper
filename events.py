@@ -8,8 +8,12 @@ from flask import Response
 from requests import get
 from scrape import getColor
 
+#TO DO:
+# 1. object orient everything
+# 2. scrape url of the event
+# 3. scrape description from url scraped in #2
 
-def main():
+def events():
 	url= 'http://www.umcs.pl'
 	response = get(url)
 	soup = BeautifulSoup(response.text, 'html.parser')
@@ -17,6 +21,8 @@ def main():
 	all_events = soup.find_all('a', class_='box-event-small')
 	i=0
 	id = i
+	failflag = False
+	itemList = []
 	for item in all_events:
 		event_name = item.find('div', class_='col-xs-7')
 		event_name = event_name.text.replace('\n', '').strip()
@@ -28,13 +34,22 @@ def main():
 		type = type.text.replace('\n', '').strip()
 		
 		color = getColor(type)
+		# check for fails in scraping
+		if (event_name == "") or (date == "") or (type == "") or (color == ""):
+			failflag = True
 
-		# serialize data
-		print(id)
-		print(event_name)
-		print(date)
-		print(type)
-		print(color)
-		id = id+1
+		# serialize data to JSON format
+		if not failflag:	
+			itemList.append({
+				'name': event_name,
+				'date': date,
+				'type': type,
+				'color': color
+			})
+	return Response(
+		response=json.dumps(itemList),
+		status=200,
+		mimetype='application/json'
+	)
 if __name__ == '__main__':
-	main()
+	events()

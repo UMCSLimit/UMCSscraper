@@ -3,6 +3,7 @@ from flask import request
 from flask_cors import CORS
 from scrape import Scraper
 from insta import InstaScraper
+from events import events
 from ztm import ZTM
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
@@ -20,7 +21,9 @@ ztm = ZTM()
 @app.route('/news')
 def getNews():
 	return umcsScraper.response()
-
+@app.route('/events')
+def getEvents():
+	return events()
 @app.route('/instagram')
 def getInsta():
 	return instaScraper.response()
@@ -51,6 +54,7 @@ def get_bus(bus_stop_id):
 
 scheduler = BackgroundScheduler(timezone="UTC")
 scheduler.add_job(umcsScraper.start, 'interval', seconds=1000)
+scheduler.add_job(events, 'interval', seconds=1000)
 scheduler.add_job(instaScraper.start, 'interval', seconds=1000, max_instances=5)
 scheduler.start()
 
