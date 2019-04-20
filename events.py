@@ -12,7 +12,7 @@ from scrape import getColor
 # 1. object orient everything
 # 2. scrape url of the event
 # 3. scrape description from url scraped in #2
-
+# 4. failcheck after len of all_events is diffrent than it supposed to be
 def events():
 	url= 'http://www.umcs.pl'
 	response = get(url)
