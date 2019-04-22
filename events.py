@@ -13,6 +13,20 @@ from scrape import getColor
 # 2. scrape url of the event
 # 3. scrape description from url scraped in #2
 # 4. failcheck after len of all_events is diffrent than it supposed to be
+"""
+
+
+def check_if_good(self):
+	if (self.event_name == "") or (self.date == "") or (self.type == "") or (self.color == ""):
+		return False
+	else:
+		return True
+def serialize_to_json(self):
+	return json.dumps(self.itemList)
+	
+
+"""
+
 def events():
 	url= 'http://www.umcs.pl'
 	response = get(url)
