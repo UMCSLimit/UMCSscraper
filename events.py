@@ -26,7 +26,17 @@ def serialize_to_json(self):
 	
 
 """
-
+def subscrape(url):
+	response = get(url)
+	soup = BeautifulSoup(response.text, 'html.parser')
+	everything = soup.find('div', class_='paginate-content')
+	return everything
+def subscrape_fixed(url):
+	response = get(url)
+	soup = BeautifulSoup(response.text, 'html.parser')
+	everything = soup.find('div', class_='paginate-content')
+	everything_fixed = everything.text.replace('\n', '').strip()
+	return everything_fixed
 def events():
 	url= 'http://www.umcs.pl'
 	response = get(url)
@@ -46,8 +56,15 @@ def events():
 		
 		type = item.find('em', class_='label-area-A')
 		type = type.text.replace('\n', '').strip()
-		
+
 		color = getColor(type)
+
+		#subscrape
+		suburl = item['href']
+		suburl = url + suburl
+		raw = str(subscrape(suburl))
+		fixed = subscrape_fixed(suburl)
+
 		# check for fails in scraping
 		if (event_name == "") or (date == "") or (type == "") or (color == ""):
 			failflag = True
@@ -58,7 +75,9 @@ def events():
 				'name': event_name,
 				'date': date,
 				'type': type,
-				'color': color
+				'color': color,
+				'raw':raw,
+				'fixed': fixed
 			})
 	return Response(
 		response=json.dumps(itemList),
