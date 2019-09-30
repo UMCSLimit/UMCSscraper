@@ -37,6 +37,7 @@ class InstaScraper:
 		self.jsonData = json.dumps(data)
 
 	def getInstagramData(self):
+		self.posts.clear()
 		if not self.loaded:
 			instaLoader = Instaloader()
 			PROFILENAME = 'umcs_lublin'
@@ -62,4 +63,4 @@ class InstaScraper:
 
 if __name__ == "__main__":
 	insta = InstaScraper()
-	insta.getInstagramData()
+	data = json.load(insta.getInstagramData())
