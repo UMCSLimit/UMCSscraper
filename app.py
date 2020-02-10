@@ -5,6 +5,7 @@ from scrape import Scraper
 from insta import InstaScraper
 from events import events
 from ztm import ZTM
+from weather import Weather
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 
@@ -17,6 +18,7 @@ umcsScraper = Scraper(timeout=15)
 instaScraper = InstaScraper()
 instaScraper.start()
 ztm = ZTM()
+weather = Weather()
 
 @app.route('/news')
 def getNews():
@@ -27,6 +29,9 @@ def getEvents():
 @app.route('/instagram')
 def getInsta():
 	return instaScraper.response()
+@app.route('/weather')
+def getWx():
+	return weather.getwxmain()
 
 @app.route('/ztm')
 def get_metadata():
@@ -51,13 +56,12 @@ def get_bus(bus_stop_id):
 		status=200,
 		mimetype='application/json'
 	)
-
 scheduler = BackgroundScheduler(timezone="UTC")
 scheduler.add_job(umcsScraper.start, 'interval', seconds=1000)
 scheduler.add_job(events, 'interval', seconds=1000)
+scheduler.add_job(weather.getwxmain, 'interval', seconds=300)
 scheduler.add_job(instaScraper.start, 'interval', seconds=1000, max_instances=5)
 scheduler.start()
-
 atexit.register(lambda: scheduler.shutdown(wait=False))
 
 if __name__ == '__main__':
