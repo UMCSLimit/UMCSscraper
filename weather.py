@@ -24,7 +24,7 @@ class Weather:
 				status=200,
 				mimetype='application/json'
 			)
-    def getForecastedWeather(self)
+    def getForecastedWeather(self):
         location = 'Lublin'  
 
 if __name__ == "__main__":

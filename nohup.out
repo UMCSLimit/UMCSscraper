@@ -1,0 +1,16 @@
+ * Serving Flask app "app" (lazy loading)
+ * Environment: production
+   WARNING: This is a development server. Do not use it in a production deployment.
+   Use a production WSGI server instead.
+ * Debug mode: off
+/home/pi/.local/lib/python3.5/site-packages/selenium/webdriver/phantomjs/webdriver.py:49: UserWarning: Selenium support for PhantomJS has been deprecated, please use headless versions of Chrome or Firefox instead
+  warnings.warn('Selenium support for PhantomJS has been deprecated, please use headless '
+ * Running on http://0.0.0.0:3113/ (Press CTRL+C to quit)
+87.239.243.68 - - [10/Feb/2020 21:44:50] "GET /weather HTTP/1.1" 200 -
+87.239.243.68 - - [10/Feb/2020 21:44:55] "GET /weather HTTP/1.1" 200 -
+87.239.243.68 - - [10/Feb/2020 21:44:56] "GET /weather HTTP/1.1" 200 -
+77.255.229.104 - - [10/Feb/2020 21:46:42] "GET /weather HTTP/1.1" 200 -
+77.255.229.104 - - [10/Feb/2020 21:46:43] "GET /favicon.ico HTTP/1.1" 404 -
+89.64.10.145 - - [10/Feb/2020 21:47:59] "GET /weather HTTP/1.1" 200 -
+89.64.10.145 - - [10/Feb/2020 21:47:59] "GET /favicon.ico HTTP/1.1" 404 -
+94.240.29.140 - - [10/Feb/2020 21:57:54] "GET /weather?fbclid=IwAR3q61XnzqFphlGrWIrTb40G8qjQpWfeF0TaUflOkKLWi5mvaBkw7u1kENM HTTP/1.1" 200 -
