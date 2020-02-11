@@ -17,6 +17,12 @@ class Weather:
     def getwxmain(self):  
         location = 'Lublin'
         weather = self.get_weather(self.api_key, location)
+        wx = weather.json()
+        wx['main']['temp'] = round(wx['main']['temp'],0)
+        wx['main']['feels_like'] = round(wx['main']['feels_like'],0)
+        wx['main']['temp_min'] = round(wx['main']['temp_min'],0)
+        wx['main']['temp_max'] = round(wx['main']['temp_max'],0)
+        weather = json.dumps(wx)
         #print(weather['main']['temp'])
         print(weather)
         return Response(
@@ -29,13 +35,19 @@ class Weather:
         weather = self.get_f_weather(self.api_key, location)
         weather = weather.json()
         i=0
-        tokeep = [0,1,2,8,16,24]
+        tokeep = [0,1,2,8,16,24, 32]
         q=0
         deleted = 0
         while i < weather['cnt']:
             if i not in tokeep:
                 del weather['list'][i-deleted]
                 deleted+=1
+            if i in tokeep:
+                #round temps
+                weather['list'][i-deleted]['main']['temp_max'] = round(weather['list'][i-deleted]['main']['temp_max'],0)
+                weather['list'][i-deleted]['main']['temp_min'] = round(weather['list'][i-deleted]['main']['temp_min'],0)
+                weather['list'][i-deleted]['main']['temp'] = round(weather['list'][i-deleted]['main']['temp'],0)
+                weather['list'][i-deleted]['main']['feels_like'] = round(weather['list'][i-deleted]['main']['feels_like'],0)
             i+=1
         print('elementow: ' + str(i))
         wx = json.dumps(weather)
