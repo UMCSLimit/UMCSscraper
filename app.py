@@ -34,7 +34,7 @@ def getWx():
 	return weather.getwxmain()
 @app.route('/weather_hourly')
 def getWxFc():
-	return weather.getwxhourly()
+	return weather.getwxforecast()
 @app.route('/ztm')
 def get_metadata():
 	return Response(
