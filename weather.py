@@ -1,7 +1,7 @@
 import requests
 import sys
 from flask import Response
-
+import json
 class Weather:
     def __init__(self):
         self.api_key = 'fa8a0d077c0f90dc6a4f252da0a0ec08'
@@ -27,8 +27,20 @@ class Weather:
     def getwxforecast(self):
         location = 'Lublin'
         weather = self.get_f_weather(self.api_key, location)
+        weather = weather.json()
+        i=0
+        tokeep = [0,1,2,8,16,24]
+        q=0
+        deleted = 0
+        while i < weather['cnt']:
+            if i not in tokeep:
+                del weather['list'][i-deleted]
+                deleted+=1
+            i+=1
+        print('elementow: ' + str(i))
+        wx = json.dumps(weather)
         return Response(
-            response=weather,
+            response=wx,
             status=200,
             mimetype='application/json'
         )
@@ -36,4 +48,4 @@ class Weather:
 
 if __name__ == "__main__":
     wx = Weather()
-    print(wx.getwxmain())
+    print(wx.getwxforecast())
