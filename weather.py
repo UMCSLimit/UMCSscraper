@@ -22,9 +22,15 @@ class Weather:
         wx['main']['feels_like'] = round(wx['main']['feels_like'],0)
         wx['main']['temp_min'] = round(wx['main']['temp_min'],0)
         wx['main']['temp_max'] = round(wx['main']['temp_max'],0)
+        #icon
+        weather_id = wx['weather'][0]['id']
+        wx_icon = round(weather_id /100,0)
+        if weather_id == 800:
+            wx['main']['icon'] = 0
+        else:
+            wx['main']['icon'] = wx_icon
+        
         weather = json.dumps(wx)
-        #print(weather['main']['temp'])
-        #print(weather)
         return Response(
 				response=weather,
 				status=200,
@@ -48,6 +54,13 @@ class Weather:
                 weather['list'][i-deleted]['main']['temp_min'] = round(weather['list'][i-deleted]['main']['temp_min'],0)
                 weather['list'][i-deleted]['main']['temp'] = round(weather['list'][i-deleted]['main']['temp'],0)
                 weather['list'][i-deleted]['main']['feels_like'] = round(weather['list'][i-deleted]['main']['feels_like'],0)
+                #icons
+                weather_id = weather['list'][i-deleted]['weather'][0]['id']
+                wx_icon = round(weather_id /100,0)
+                if weather_id == 800:
+                    weather['list'][i-deleted]['main']['icon'] = 0
+                else:
+                    weather['list'][i-deleted]['main']['icon'] = wx_icon
             i+=1
         print('elementow: ' + str(i))
         wx = json.dumps(weather)
