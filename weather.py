@@ -24,7 +24,7 @@ class Weather:
         wx['main']['temp_max'] = round(wx['main']['temp_max'],0)
         weather = json.dumps(wx)
         #print(weather['main']['temp'])
-        print(weather)
+        #print(weather)
         return Response(
 				response=weather,
 				status=200,
