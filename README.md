@@ -18,6 +18,7 @@
 ## UMCS related:
 * /instagram - gets posts from instagram (links) + description + number of likes
 * /events - gets current events from UMCS main website
+* /news - returns latests news from UMCS website
 ## Moria related:
 * /aula105 - returns 2 upcoming classes in 105 inf Aula Duża
 ## ZTM related:
