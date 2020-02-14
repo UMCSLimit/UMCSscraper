@@ -6,6 +6,7 @@ from insta import InstaScraper
 from events import events
 from ztm import ZTM
 from weather import Weather
+from scrapeMoria import getActivities
 from apscheduler.schedulers.background import BackgroundScheduler
 import atexit
 
@@ -19,7 +20,9 @@ instaScraper = InstaScraper()
 instaScraper.start()
 ztm = ZTM()
 weather = Weather()
-
+@app.route('/aula105')
+def getAula105():
+	return getActivities()
 @app.route('/news')
 def getNews():
 	return umcsScraper.response()
