@@ -121,7 +121,6 @@ def getClosestTwo(activity_list):
             break
         elif sectime > currtime and ac.isOneTime: 
             if now.month == ac.month and now.day == ac.day: 
-                print('POTĘZNY KRYCZKA')
                 foundAny = True       
                 break
         else:
