@@ -55,37 +55,42 @@ def MoriaScraper(id):
     request = requests.get(url)
     soup = BeautifulSoup(request.text, 'html.parser')
     all_activities = soup.find_all(  'div', attrs={'class':'activity_block','data-weekdaytext' : stringWeekDay}   )
-    for activ in all_activities:
-        # get title
-        divs = activ.find_all('div', attrs={'class':'activity_block_top'})
-        _title = divs[0].find_all('a', title=True, attrs={'class': 'subject'})
-        title = _title[0]['title'] # TITLE
-        # get time start
-        timeStart = activ['data-starttime']
-        timeEnd = activ['data-endtime']
-        breakTime = activ['data-breaktime']
-        # check if it is only one time
-        oneTimeFlag = False
-        onetime = activ.find('a', attrs={'title':'0i Zaj. jednorazowe M\DD'})
-        #print(onetime)
-        if onetime:
-            oneTimeFlag = True
-            # extract date and time from title
-            try:
-                ActivityList.append(Acitvity
-                (iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, int(title[0:1]), int(title[2:4])))
-            except ValueError:
-                ActivityList.append(Acitvity
-                (iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
-        else:
-            ActivityList.append(Acitvity(iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
-        # ActivityList.append({
-        #     'id': iter,
-        #     'title': title,
-        #     'timeStart': timeStart,
-        #     'timeEnd': timeEnd
-        # })
-        iter+=1
+    print(len(all_activities))
+    if len(all_activities) == 0:
+        ActivityList.append(Acitvity(0,'Brak zajec', '00:00', '00:00', 0,0, 0,0))
+        ActivityList.append(Acitvity(1,'Brak zajec', '00:00', '00:00', 0,0,0,0))
+    else:
+        for activ in all_activities:
+            # get title
+            divs = activ.find_all('div', attrs={'class':'activity_block_top'})
+            _title = divs[0].find_all('a', title=True, attrs={'class': 'subject'})
+            title = _title[0]['title'] # TITLE
+            # get time start
+            timeStart = activ['data-starttime']
+            timeEnd = activ['data-endtime']
+            breakTime = activ['data-breaktime']
+            # check if it is only one time
+            oneTimeFlag = False
+            onetime = activ.find('a', attrs={'title':'0i Zaj. jednorazowe M\DD'})
+            #print(onetime)
+            if onetime:
+                oneTimeFlag = True
+                # extract date and time from title
+                try:
+                    ActivityList.append(Acitvity
+                    (iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, int(title[0:1]), int(title[2:4])))
+                except ValueError:
+                    ActivityList.append(Acitvity
+                    (iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
+            else:
+                ActivityList.append(Acitvity(iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
+            # ActivityList.append({
+            #     'id': iter,
+            #     'title': title,
+            #     'timeStart': timeStart,
+            #     'timeEnd': timeEnd
+            # })
+            iter+=1
 
    # aula = json.dumps(ActivityList)
    # return Response(
