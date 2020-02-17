@@ -60,6 +60,7 @@ def MoriaScraper(id):
         ActivityList.append(Acitvity(0,'Brak zajec', '00:00', '00:00', 0,0, 0,0))
         ActivityList.append(Acitvity(1,'Brak zajec', '00:00', '00:00', 0,0,0,0))
     else:
+        print(all_activities)
         for activ in all_activities:
             # get title
             divs = activ.find_all('div', attrs={'class':'activity_block_top'})
@@ -79,18 +80,21 @@ def MoriaScraper(id):
                 try:
                     ActivityList.append(Acitvity
                     (iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, int(title[0:1]), int(title[2:4])))
+                    iter+=1
                 except ValueError:
                     ActivityList.append(Acitvity
                     (iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
+                    iter+=1
             else:
-                ActivityList.append(Acitvity(iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
+                if title != ActivityList[iter-1].name:
+                    ActivityList.append(Acitvity(iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
+                    iter+=1
             # ActivityList.append({
             #     'id': iter,
             #     'title': title,
             #     'timeStart': timeStart,
             #     'timeEnd': timeEnd
             # })
-            iter+=1
 
    # aula = json.dumps(ActivityList)
    # return Response(
@@ -166,6 +170,7 @@ def getClosestTwo(activity_list):
             indeks = begindex
             break
     indeks+=1
+    print(activity_list[3].name)
     FinalList.append({
         'id': 1,
         'title': activity_list[(indeks)%listlength].name,
