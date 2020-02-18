@@ -170,7 +170,6 @@ def getClosestTwo(activity_list):
             indeks = begindex
             break
     indeks+=1
-    print(activity_list[3].name)
     FinalList.append({
         'id': 1,
         'title': activity_list[(indeks)%listlength].name,
