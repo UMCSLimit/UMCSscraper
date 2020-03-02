@@ -83,12 +83,11 @@ def MoriaScraper(id):
                     iter+=1
                 except ValueError:
                     ActivityList.append(Acitvity
-                    (iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
+                    (iter,title,timeStart,timeEnd, breakTime,0, 0, 0))
                     iter+=1
             else:
-                if title != ActivityList[iter-1].name:
-                    ActivityList.append(Acitvity(iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
-                    iter+=1
+                ActivityList.append(Acitvity(iter,title,timeStart,timeEnd, breakTime,oneTimeFlag, 0, 0))
+                iter+=1
             # ActivityList.append({
             #     'id': iter,
             #     'title': title,

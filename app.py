@@ -38,6 +38,7 @@ def getWx():
 @app.route('/weather_hourly')
 def getWxFc():
 	return weather.getwxforecast()
+'''
 @app.route('/ztm')
 def get_metadata():
 	return Response(
@@ -53,7 +54,7 @@ def get_buses():
 		status=200,
 		mimetype='application/json'
 	)
-
+'''
 @app.route('/ztm/<int:bus_stop_id>')
 def get_bus(bus_stop_id):
 	return Response(
