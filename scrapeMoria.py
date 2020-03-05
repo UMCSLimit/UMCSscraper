@@ -158,8 +158,9 @@ def getClosestTwo(activity_list):
         'isOneTime': activity_list[indeks].isOneTime
     })
     listlength = len(activity_list)
-    begindex = indeks%listlength
+    begindex = indeks+1%listlength
     print('Begin indeks: ' + str(begindex))
+    indeks = indeks+1%listlength
     while activity_list[(indeks)%listlength].isOneTime and (now.month != activity_list[(indeks)%listlength].month or now.day != activity_list[(indeks)%listlength].day):
         #print('while')
         indeks+=1
@@ -184,6 +185,14 @@ def getClosestTwo(activity_list):
 	)
 def getActivities():
     scrap = MoriaScraper(30)
+    ret = getClosestTwo(ActivityList)
+    return ret
+def getActivities_217():
+    scrap = MoriaScraper(155)
+    ret = getClosestTwo(ActivityList)
+    return ret
+def getActivities_332():
+    scrap = MoriaScraper(95)
     ret = getClosestTwo(ActivityList)
     return ret
 if __name__ == '__main__':
